@@ -29,7 +29,7 @@ extension AnimationController: UIViewControllerAnimatedTransitioning {
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
         let (presentingVC, presentedVC) = viewControllers(transitionContext, isPresentation)
         if isPresentation {
-            transitionContext.containerView.addSubview(presentedVC.view)            
+            transitionContext.containerView.addSubview(presentedVC.view)
         }
 
         let duration = transitionDuration(using: transitionContext)
@@ -47,34 +47,19 @@ extension AnimationController: UIViewControllerAnimatedTransitioning {
                                                      presentingVC: presentingVC,
                                                      presentedVC: presentedVC)
 
-        let drawerFullY = (presentedVC as? DrawerPresentable)?.fullExpansionBehaviour?.drawerFullY
-            ?? configuration.fullExpansionBehaviour.drawerFullY
-
         let drawerPartialH = (presentedVC as? DrawerPresentable)?.heightOfPartiallyExpandedDrawer ?? 0
         let partialH = GeometryEvaluator.drawerPartialH(drawerPartialHeight: drawerPartialH,
                                                         containerViewHeight: containerViewH)
 
-        let drawerCollapsedH = (presentedVC as? DrawerPresentable)?.heightOfCollapsedDrawer ?? 0
-        let collapsedH = GeometryEvaluator.drawerPartialH(drawerPartialHeight: drawerCollapsedH,
-                                                          containerViewHeight: containerViewH)
+        let startDrawerState = GeometryEvaluator.drawerState(for: initialFrame.origin.y,
+                                                             drawerPartialHeight: partialH,
+                                                             containerViewHeight: containerViewH,
+                                                             configuration: configuration)
 
-        let startDrawerState = GeometryEvaluator.drawerState(
-            for: initialFrame.origin.y,
-            drawerFullY: drawerFullY,
-            drawerCollapsedHeight: collapsedH,
-            drawerPartialHeight: partialH,
-            containerViewHeight: containerViewH,
-            configuration: configuration
-        )
-
-        let targetDrawerState = GeometryEvaluator.drawerState(
-            for: finalFrame.origin.y,
-            drawerFullY: drawerFullY,
-            drawerCollapsedHeight: collapsedH,
-            drawerPartialHeight: partialH,
-            containerViewHeight: containerViewH,
-            configuration: configuration
-        )
+        let targetDrawerState = GeometryEvaluator.drawerState(for: finalFrame.origin.y,
+                                                              drawerPartialHeight: partialH,
+                                                              containerViewHeight: containerViewH,
+                                                              configuration: configuration)
 
         let info = AnimationSupport.makeInfo(startDrawerState: startDrawerState,
                                              targetDrawerState: targetDrawerState,

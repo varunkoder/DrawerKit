@@ -8,7 +8,7 @@ public struct DrawerConfiguration {
         case doesNotCoverStatusBar
         case leavesCustomGap(gap: CGFloat)
 
-        public var drawerFullY: CGFloat {
+        var drawerFullY: CGFloat {
             switch self {
             case .coversFullScreen:
                 return 0
@@ -82,9 +82,7 @@ public struct DrawerConfiguration {
 
     /// Whether the drawer expands to cover the entire screen, the entire screen minus
     /// the status bar, or the entire screen minus a custom gap. The default is to cover
-    /// the full screen. If presented view controller conforms to the DrawerPresentable
-    /// the value that it returns from `fullExpansionBehaviour` will be used instead,
-    /// unless it is `nil`.
+    /// the full screen.
     public var fullExpansionBehaviour: FullExpansionBehaviour
 
     /// When `true`, the drawer is presented first in its partially expanded state.
@@ -115,10 +113,6 @@ public struct DrawerConfiguration {
 
     /// Whether or not the drawer can be dismissed by tapping anywhere outside of it.
     /// The default value is `true`.
-    ///
-    /// **NOTE:** this only works for states where taps are *not* being passed through
-    /// to the presenting view, as the gesture recognizer for these taps is on the
-    /// drawer container view. See the `passthroughTouchesInStates` property.
     public var isDismissableByOutsideDrawerTaps: Bool
 
     /// How many taps are required for dismissing the drawer by tapping outside of it.
@@ -172,9 +166,6 @@ public struct DrawerConfiguration {
 
     /// In what states touches should be passed through to the presenting view.
     /// By default touches will not be passed through only in `fullyExpanded` state.
-    ///
-    /// **NOTE:** the functionality of `isDismissableByOutsideDrawerTaps` is affected
-    /// by how these options are configured.
     public var passthroughTouchesInStates: PassthroughOptions
 
     public init(initialState: DrawerState? = nil,

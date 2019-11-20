@@ -23,7 +23,6 @@ extension DrawerState {
     public static func ==(lhs: DrawerState, rhs: DrawerState) -> Bool {
         switch (lhs, rhs) {
         case (.dismissed, .dismissed),
-             (.collapsed, .collapsed),
              (.partiallyExpanded, .partiallyExpanded),
              (.fullyExpanded, .fullyExpanded):
             return true

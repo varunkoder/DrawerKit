@@ -1,6 +1,6 @@
 import UIKit
 
-final class PresentationController: UIPresentationController {
+public final class PresentationController: UIPresentationController {
     let configuration: DrawerConfiguration // intentionally internal and immutable
     let inDebugMode: Bool
     let handleView: UIView?
@@ -26,7 +26,7 @@ final class PresentationController: UIPresentationController {
 
     var pullToDismissManager: PullToDismissManager?
 
-    weak var scrollViewForPullToDismiss: UIScrollView? {
+    weak public var scrollViewForPullToDismiss: UIScrollView? {
         willSet {
             if let manager = pullToDismissManager {
                 scrollViewForPullToDismiss?.delegate = manager.delegate
@@ -63,11 +63,8 @@ final class PresentationController: UIPresentationController {
     }
 
     func gestureAvailabilityConditionsDidChange() {
-        drawerDismissalTapGR?.isEnabled =
-            targetDrawerState == .partiallyExpanded ||
-            targetDrawerState == .fullyExpanded ||
-            targetDrawerState == .collapsed
-        drawerFullExpansionTapGR?.isEnabled = (targetDrawerState == .partiallyExpanded || targetDrawerState == .collapsed)
+        drawerDismissalTapGR?.isEnabled = targetDrawerState == .partiallyExpanded
+        drawerFullExpansionTapGR?.isEnabled = targetDrawerState == .partiallyExpanded
 
         if let scrollView = scrollViewForPullToDismiss, let manager = pullToDismissManager {
             switch targetDrawerState {
@@ -100,10 +97,11 @@ extension PresentationController: PresentationContainerViewDelegate {
 
 extension PresentationController {
 
-    override var frameOfPresentedViewInContainerView: CGRect {
+    override public var frameOfPresentedViewInContainerView: CGRect {
         var frame: CGRect = .zero
         frame.size = size(forChildContentContainer: presentedViewController,
                           withParentContainerSize: containerViewSize)
+        let drawerFullY = configuration.fullExpansionBehaviour.drawerFullY
         frame.origin.y = GeometryEvaluator.drawerPositionY(for: targetDrawerState,
                                                            drawerCollapsedHeight: drawerCollapsedHeight,
                                                            drawerPartialHeight: drawerPartialHeight,
@@ -112,7 +110,7 @@ extension PresentationController {
         return frame
     }
 
-    override func presentationTransitionWillBegin() {
+    override public func presentationTransitionWillBegin() {
         setupPresentationContainerView()
 
         // NOTE: `targetDrawerState.didSet` is not invoked within the
@@ -133,18 +131,18 @@ extension PresentationController {
         enableDrawerDismissalTapRecogniser(enabled: false)
     }
 
-    override func presentationTransitionDidEnd(_ completed: Bool) {
+    override public func presentationTransitionDidEnd(_ completed: Bool) {
         enableDrawerFullExpansionTapRecogniser(enabled: true)
         enableDrawerDismissalTapRecogniser(enabled: true)
     }
 
-    override func dismissalTransitionWillBegin() {
+    override public func dismissalTransitionWillBegin() {
         addCornerRadiusAnimationEnding(at: .dismissed)
         enableDrawerFullExpansionTapRecogniser(enabled: false)
         enableDrawerDismissalTapRecogniser(enabled: false)
     }
 
-    override func dismissalTransitionDidEnd(_ completed: Bool) {
+    override public func dismissalTransitionDidEnd(_ completed: Bool) {
         removePresentationContainerView()
         removeDrawerFullExpansionTapRecogniser()
         removeDrawerDismissalTapRecogniser()
@@ -152,18 +150,13 @@ extension PresentationController {
         removeHandleView()
     }
 
-    override func containerViewWillLayoutSubviews() {
+    override public func containerViewWillLayoutSubviews() {
         presentedView?.frame = frameOfPresentedViewInContainerView
     }
 }
 
 extension PresentationController: DrawerPresentationControlling {
     public func setDrawerState(_ state: DrawerState, animated: Bool, animateAlongside: (() -> Void)?, completion: (() -> Void)?) {
-        switch state {
-        case .transitioning:
-            fatalError("`transitioning` state is not allowed")
-        default:
-            animateTransition(to: state, animateAlongside: animateAlongside, completion: completion)
-        }
+        
     }
 }

@@ -1,7 +1,7 @@
 import UIKit
 
 extension PresentationController {
-    func animateTransition(to endingState: DrawerState, animateAlongside: (() -> Void)? = nil, completion: (() -> Void)? = nil) {
+    public func animateTransition(to endingState: DrawerState, animateAlongside: (() -> Void)? = nil, completion: (() -> Void)? = nil) {
         let startingState = currentDrawerState
 
         let maxCornerRadius = maximumCornerRadius
@@ -91,14 +91,10 @@ extension PresentationController {
             }
 
             if endingPosition != .end {
-                self.targetDrawerState = GeometryEvaluator.drawerState(
-                    for: self.currentDrawerY,
-                    drawerFullY: self.drawerFullY,
-                    drawerCollapsedHeight: self.drawerCollapsedHeight,
-                    drawerPartialHeight: self.drawerPartialY,
-                    containerViewHeight: self.containerViewHeight,
-                    configuration: self.configuration
-                )
+                self.targetDrawerState = GeometryEvaluator.drawerState(for: self.currentDrawerY,
+                                                                       drawerPartialHeight: self.drawerPartialY,
+                                                                       containerViewHeight: self.containerViewHeight,
+                                                                       configuration: self.configuration)
             }
 
             AnimationSupport.clientCleanupViews(presentingDrawerAnimationActions: presentingAnimationActions,
@@ -113,6 +109,7 @@ extension PresentationController {
     }
 
     func addCornerRadiusAnimationEnding(at endingState: DrawerState) {
+        let drawerFullY = configuration.fullExpansionBehaviour.drawerFullY
         guard maximumCornerRadius != 0
             && drawerPartialY != drawerFullY
             && endingState != currentDrawerState
@@ -164,6 +161,7 @@ extension PresentationController {
 
     private func positionsY(startingState: DrawerState,
                             endingState: DrawerState) -> (starting: CGFloat, ending: CGFloat) {
+        let drawerFullY = configuration.fullExpansionBehaviour.drawerFullY
         let startingPositionY =
             GeometryEvaluator.drawerPositionY(for: startingState,
                                               drawerCollapsedHeight: drawerCollapsedHeight,
